@@ -109,7 +109,7 @@ export default function App() {
       {/* Header Bar */}
       <Header />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16 space-y-12 lg:space-y-16">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12 lg:space-y-16">
         {/* Hero Section & SearchBar */}
         <section className="text-center max-w-3xl mx-auto space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
@@ -119,10 +119,6 @@ export default function App() {
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Explore Cutting-Edge Tech Gear
           </h1>
-
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl mx-auto">
-            Search our catalog using natural language. Groq AI will analyze your query and filter matching products instantly.
-          </p>
 
           {/* SearchBar Component */}
           <SearchBar
@@ -185,7 +181,7 @@ export default function App() {
         )}
 
         {/* AI Reasoning Badge & Active Filters Header */}
-        <section className="space-y-6">
+        <section className="pt-4 lg:pt-8 space-y-6">
           {/* Error Banner */}
           {error && (
             <div className="bg-rose-950/40 border border-rose-800/60 rounded-2xl p-4 flex items-center justify-between text-rose-300 text-xs sm:text-sm">
@@ -239,10 +235,10 @@ export default function App() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
             <div className="flex items-center gap-3">
               <ShoppingBag className="w-6 h-6 text-indigo-400 shrink-0" />
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 {isFiltered ? 'AI Filtered Products' : 'All Products'}
               </h2>
-              <span className="text-xs text-slate-400 bg-slate-900 px-2.5 py-0.5 rounded-full border border-slate-800/80 font-mono font-medium">
+              <span className="text-xs text-slate-400 bg-slate-900/90 px-2.5 py-0.5 rounded-full border border-slate-800/80 font-mono font-normal">
                 {displayedProducts.length} of {productsData.length} items
               </span>
             </div>
@@ -252,7 +248,7 @@ export default function App() {
               {isFiltered && (
                 <button
                   onClick={handleResetFilters}
-                  className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 flex items-center gap-1.5 transition-colors shrink-0"
+                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 flex items-center gap-1.5 transition-colors shrink-0"
                 >
                   <RefreshCw className="w-3 h-3" /> Clear AI Filter
                 </button>
@@ -268,7 +264,7 @@ export default function App() {
                       setReasoning('');
                     }
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                     selectedCategory === category && !isFiltered
                       ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
                       : 'bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800'

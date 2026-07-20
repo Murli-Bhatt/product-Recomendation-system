@@ -15,7 +15,7 @@ export function Header() {
           </div>
           <div>
             <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              Groq Recommender
+              AI Recommender
               <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">
                 v1.0
               </span>
@@ -27,14 +27,14 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs">
             <Cpu className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-300">Model:</span>
-            <span className="text-indigo-400 font-mono font-medium">llama-3.3-70b</span>
+            <span className="text-slate-300">Engine:</span>
+            <span className="text-indigo-400 font-medium">Smart AI</span>
           </div>
 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 bg-slate-950">
             <span className={`w-2 h-2 rounded-full ${apiKeyPresent ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
             <span className={apiKeyPresent ? 'text-emerald-400' : 'text-amber-400'}>
-              {apiKeyPresent ? 'Groq Active' : 'Demo Mode'}
+              {apiKeyPresent ? 'API Active' : 'Demo Mode'}
             </span>
           </div>
         </div>
