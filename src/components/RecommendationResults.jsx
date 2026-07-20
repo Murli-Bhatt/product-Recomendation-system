@@ -8,15 +8,18 @@ export function RecommendationResults({
   isLoading,
   error,
   onReset,
+  isDarkMode = true,
 }) {
   if (isLoading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[350px]">
+      <div className={`border rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[350px] transition-colors ${
+        isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+      }`}>
         <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-4">
-          <Sparkles className="w-6 h-6 text-indigo-400 animate-spin" />
+          <Sparkles className="w-6 h-6 text-indigo-500 animate-spin" />
         </div>
-        <h3 className="text-lg font-semibold text-white">Generating Smart Recommendations</h3>
-        <p className="text-sm text-slate-400 max-w-sm mt-1">
+        <h3 className="text-lg font-semibold">Generating Smart Recommendations</h3>
+        <p className={`text-sm max-w-sm mt-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
           Groq AI is processing your preferences and scanning product features...
         </p>
       </div>
@@ -41,12 +44,16 @@ export function RecommendationResults({
 
   if (!recommendations) {
     return (
-      <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[350px]">
-        <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mb-4 text-slate-400">
-          <Sparkles className="w-6 h-6 text-indigo-400" />
+      <div className={`border rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[350px] transition-colors ${
+        isDarkMode ? 'bg-slate-900 border-slate-800/80 text-slate-100' : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+      }`}>
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${
+          isDarkMode ? 'bg-slate-800 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
+        }`}>
+          <Sparkles className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-semibold text-white">Ready for AI Recommendations</h3>
-        <p className="text-xs text-slate-400 max-w-sm mt-1">
+        <h3 className="text-base font-semibold">Ready for AI Recommendations</h3>
+        <p className={`text-xs max-w-sm mt-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
           Adjust parameters on the left and click "Get AI Recommendations" to receive tailored suggestions powered by Groq.
         </p>
       </div>
@@ -62,18 +69,26 @@ export function RecommendationResults({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between bg-indigo-950/30 border border-indigo-900/40 rounded-2xl p-4">
+      <div className={`border rounded-2xl p-4 flex items-center justify-between transition-colors ${
+        isDarkMode
+          ? 'bg-indigo-950/30 border-indigo-900/40 text-slate-100'
+          : 'bg-indigo-50/80 border-indigo-200 text-slate-900'
+      }`}>
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-indigo-500 uppercase tracking-wider">
               {recommendations.isDemoMode ? 'Demo Recommendation Result' : 'Groq AI Analysis'}
             </span>
           </div>
-          <p className="text-xs text-slate-300 mt-1">{recommendations.summary}</p>
+          <p className={`text-xs mt-1 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+            {recommendations.summary}
+          </p>
         </div>
         <button
           onClick={onReset}
-          className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+          className={`p-2 rounded-lg transition-colors ${
+            isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
+          }`}
           title="Reset recommendations"
         >
           <RefreshCw className="w-4 h-4" />
@@ -87,6 +102,7 @@ export function RecommendationResults({
             product={product}
             matchData={recMap.get(product.id)}
             isRecommended={true}
+            isDarkMode={isDarkMode}
           />
         ))}
       </div>

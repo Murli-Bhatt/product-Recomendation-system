@@ -7,6 +7,7 @@ export function RecommendationForm({
   setPreferences,
   onSubmit,
   isLoading,
+  isDarkMode = true,
 }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,26 +20,36 @@ export function RecommendationForm({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-      <div className="flex items-center justify-between pb-5 border-b border-slate-800 mb-6">
+    <div
+      className={`border rounded-2xl p-6 shadow-xl relative overflow-hidden transition-colors ${
+        isDarkMode
+          ? 'bg-slate-900 border-slate-800 text-slate-100'
+          : 'bg-white border-slate-200 text-slate-900'
+      }`}
+    >
+      <div className={`flex items-center justify-between pb-5 border-b mb-6 ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
         <div className="flex items-center gap-2.5">
-          <Sliders className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-base font-semibold text-white">Your Preferences</h2>
+          <Sliders className="w-5 h-5 text-indigo-500" />
+          <h2 className="text-base font-semibold">Your Preferences</h2>
         </div>
-        <span className="text-xs text-slate-500">Customize AI Matching</span>
+        <span className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Customize AI Matching</span>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Category */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-2">
+          <label className={`block text-xs font-medium mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
             Target Category
           </label>
           <select
             name="category"
             value={preferences.category}
             onChange={handleChange}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+            className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors ${
+              isDarkMode
+                ? 'bg-slate-950 border-slate-800 text-slate-200'
+                : 'bg-slate-50 border-slate-300 text-slate-900'
+            }`}
           >
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
@@ -50,11 +61,11 @@ export function RecommendationForm({
 
         {/* Budget */}
         <div>
-          <div className="flex justify-between items-center text-xs font-medium text-slate-300 mb-2">
+          <div className={`flex justify-between items-center text-xs font-medium mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
             <span className="flex items-center gap-1">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" /> Max Budget
+              <DollarSign className="w-3.5 h-3.5 text-emerald-500" /> Max Budget
             </span>
-            <span className="text-emerald-400 font-bold">${preferences.budget}</span>
+            <span className="text-emerald-500 font-bold">${preferences.budget}</span>
           </div>
           <input
             type="range"
@@ -64,29 +75,33 @@ export function RecommendationForm({
             step="25"
             value={preferences.budget}
             onChange={handleChange}
-            className="w-full accent-indigo-500 cursor-pointer bg-slate-950 h-2 rounded-lg"
+            className={`w-full accent-indigo-500 cursor-pointer h-2 rounded-lg ${isDarkMode ? 'bg-slate-950' : 'bg-slate-200'}`}
           />
         </div>
 
         {/* Target Use */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-2 flex items-center gap-1">
-            <Target className="w-3.5 h-3.5 text-indigo-400" /> Primary Use Case
+          <label className={`block text-xs font-medium mb-2 flex items-center gap-1 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+            <Target className="w-3.5 h-3.5 text-indigo-500" /> Primary Use Case
           </label>
           <input
             type="text"
             name="targetUse"
             value={preferences.targetUse}
             onChange={handleChange}
-            placeholder="e.g. Remote work, Gym fitness, Espresso making"
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+            placeholder="e.g. Remote work, Gym fitness, Gaming"
+            className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors ${
+              isDarkMode
+                ? 'bg-slate-950 border-slate-800 text-slate-200 placeholder-slate-500'
+                : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400'
+            }`}
           />
         </div>
 
         {/* Notes */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-2 flex items-center gap-1">
-            <FileText className="w-3.5 h-3.5 text-indigo-400" /> Specific Requirements
+          <label className={`block text-xs font-medium mb-2 flex items-center gap-1 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+            <FileText className="w-3.5 h-3.5 text-indigo-500" /> Specific Requirements
           </label>
           <textarea
             name="description"
@@ -94,14 +109,18 @@ export function RecommendationForm({
             value={preferences.description}
             onChange={handleChange}
             placeholder="e.g. Needs long battery life and lightweight design"
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 resize-none"
+            className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 resize-none transition-colors ${
+              isDarkMode
+                ? 'bg-slate-950 border-slate-800 text-slate-200 placeholder-slate-500'
+                : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400'
+            }`}
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           {isLoading ? (
             <>
