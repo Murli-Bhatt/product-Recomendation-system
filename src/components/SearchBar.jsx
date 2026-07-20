@@ -51,8 +51,8 @@ export function SearchBar({
   };
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
-      {/* Expanded h-14 sm:h-16 Search Bar with Clean Glow & Theme Support */}
+    <div className="space-y-3 max-w-3xl mx-auto">
+      {/* 52px Compact Search Bar */}
       <form onSubmit={handleSubmit} className="relative flex items-center group">
         <div className="absolute left-4 text-slate-400 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
           <Search className="w-5 h-5" />
@@ -63,20 +63,20 @@ export function SearchBar({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Search by name, category, or features (e.g. gaming, ANC)..."
-          className={`w-full h-14 sm:h-16 border rounded-2xl pl-12 pr-36 sm:pr-40 text-sm focus:outline-none transition-all shadow-xl ${
+          className={`w-full h-13 sm:h-14 border rounded-2xl pl-12 pr-36 sm:pr-40 text-sm focus:outline-none transition-all shadow-md ${
             isDarkMode
-              ? 'bg-slate-900/90 border-slate-800/80 text-white placeholder-slate-500 focus:border-indigo-500/80 focus:ring-2 focus:ring-indigo-500/30 shadow-indigo-500/10'
-              : 'bg-white border-slate-200/80 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-indigo-500/5'
+              ? 'bg-slate-900/90 border-slate-800/80 text-white placeholder-slate-500 focus:border-indigo-500/80 focus:ring-2 focus:ring-indigo-500/30'
+              : 'bg-white border-slate-200/80 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
           }`}
         />
 
-        <div className="absolute right-2.5 flex items-center gap-1.5">
+        <div className="absolute right-2 flex items-center gap-1.5">
           {inputValue && (
             <button
               type="button"
               onClick={handleClear}
               disabled={isLoading}
-              className={`p-2 rounded-xl transition-colors disabled:opacity-50 ${
+              className={`p-1.5 rounded-xl transition-colors disabled:opacity-50 ${
                 isDarkMode ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
               }`}
               title="Clear search"
@@ -90,7 +90,7 @@ export function SearchBar({
             <button
               type="button"
               onClick={onToggleAiForm}
-              className={`p-2.5 rounded-xl border transition-all ${
+              className={`p-2 rounded-xl border transition-all ${
                 isAiFormOpen
                   ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
                   : isDarkMode
@@ -107,7 +107,7 @@ export function SearchBar({
           <button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/30 disabled:opacity-70 flex items-center gap-1.5 min-w-[76px] justify-center"
+            className="px-3.5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/30 disabled:opacity-70 flex items-center gap-1.5 min-w-[72px] justify-center"
           >
             {isLoading ? (
               <>
@@ -121,8 +121,8 @@ export function SearchBar({
         </div>
       </form>
 
-      {/* Quick Filter Tags (Refined Outline Chips with Spark Icon) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      {/* Quick Filter Tags (Compact Outlined Chips) */}
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-0.5 scrollbar-none">
         <span className={`text-xs font-semibold flex items-center gap-1 shrink-0 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
           <Sparkles className="w-3.5 h-3.5 text-indigo-500" /> Filters:
         </span>
@@ -134,7 +134,7 @@ export function SearchBar({
               type="button"
               disabled={isLoading}
               onClick={() => handleTagClick(tag)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all border ${
+              className={`px-2.5 sm:px-3 py-1 rounded-xl text-[11px] sm:text-xs font-medium whitespace-nowrap transition-all border ${
                 isSelected
                   ? isDarkMode
                     ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/80 ring-1 ring-indigo-500/30 shadow-xs'
