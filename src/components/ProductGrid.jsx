@@ -2,7 +2,7 @@ import React from 'react';
 import { ProductCard } from './ProductCard';
 import { PackageSearch, RefreshCw } from 'lucide-react';
 
-export function ProductGrid({ products = [], isLoading = false, onResetSearch }) {
+export function ProductGrid({ products = [], isLoading = false, onResetSearch, onAddToCart }) {
   // Skeleton loader for loading state
   if (isLoading) {
     return (
@@ -38,7 +38,7 @@ export function ProductGrid({ products = [], isLoading = false, onResetSearch })
   // Empty state if no products match
   if (!products || products.length === 0) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[300px] space-y-4">
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[300px] space-y-4">
         <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-400">
           <PackageSearch className="w-7 h-7 text-indigo-400" />
         </div>
@@ -64,7 +64,7 @@ export function ProductGrid({ products = [], isLoading = false, onResetSearch })
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
       ))}
     </div>
   );

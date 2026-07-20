@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Tag, Loader2 } from 'lucide-react';
+import { Search, X, Sparkles, Loader2, SlidersHorizontal } from 'lucide-react';
 
 export function SearchBar({
   searchTerm,
@@ -8,6 +8,8 @@ export function SearchBar({
   activeFilterTag,
   onSelectQuickFilter,
   isLoading = false,
+  onToggleAiForm,
+  isAiFormOpen = false,
 }) {
   const [inputValue, setInputValue] = useState(searchTerm || '');
 
@@ -49,21 +51,21 @@ export function SearchBar({
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto">
-      {/* Search Input Bar */}
-      <form onSubmit={handleSubmit} className="relative flex items-center">
-        <div className="absolute left-4 text-slate-400 pointer-events-none">
-          <Search className="w-5 h-5 text-indigo-400" />
+      {/* 56px Search Bar with Backdrop Glow */}
+      <form onSubmit={handleSubmit} className="relative flex items-center group">
+        <div className="absolute left-4 text-slate-400 pointer-events-none group-focus-within:text-indigo-400 transition-colors">
+          <Search className="w-5 h-5" />
         </div>
 
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Search products by name, category, or features (e.g., gaming, ANC, titanium)..."
-          className="w-full bg-slate-900 border border-slate-800 focus:border-indigo-500 rounded-2xl pl-12 pr-32 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all shadow-lg"
+          placeholder="Search by name, category, or features (e.g. gaming, ANC)..."
+          className="w-full h-[56px] bg-slate-900/90 border border-slate-800 focus:border-indigo-500/80 rounded-2xl pl-12 pr-36 sm:pr-40 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-xl shadow-indigo-500/10 backdrop-blur-md transition-all"
         />
 
-        <div className="absolute right-2 flex items-center gap-1.5">
+        <div className="absolute right-2.5 flex items-center gap-1.5">
           {inputValue && (
             <button
               type="button"
@@ -76,15 +78,32 @@ export function SearchBar({
             </button>
           )}
 
+          {/* Embedded Custom Criteria Form Toggle Button */}
+          {onToggleAiForm && (
+            <button
+              type="button"
+              onClick={onToggleAiForm}
+              className={`p-2 rounded-xl border transition-all ${
+                isAiFormOpen
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-white border-slate-700/60 hover:bg-slate-800'
+              }`}
+              title={isAiFormOpen ? 'Close Custom Criteria Form' : 'Open Custom Criteria Form'}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Primary Submit Search Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-colors shadow-md shadow-indigo-600/30 disabled:opacity-70 flex items-center gap-1.5 min-w-[76px] justify-center"
+            className="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/30 disabled:opacity-70 flex items-center gap-1.5 min-w-[76px] justify-center"
           >
             {isLoading ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                <span>Searching</span>
+                <span className="hidden sm:inline">Searching</span>
               </>
             ) : (
               <span>Search</span>
@@ -93,10 +112,10 @@ export function SearchBar({
         </div>
       </form>
 
-      {/* Quick Filter Tags */}
+      {/* Quick Filter Tags (Subtle Outlined Chips with Spark Icon) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         <span className="text-xs font-semibold text-slate-400 flex items-center gap-1 shrink-0">
-          <Tag className="w-3.5 h-3.5 text-indigo-400" /> Quick Filters:
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400" /> Quick Filters:
         </span>
         {quickFilterTags.map((tag) => {
           const isSelected = activeFilterTag?.label === tag.label;
@@ -108,11 +127,11 @@ export function SearchBar({
               onClick={() => handleTagClick(tag)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all border ${
                 isSelected
-                  ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/60 shadow-sm'
-                  : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
-              } disabled:opacity-50`}
+                  ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/80 ring-1 ring-indigo-500/30 shadow-sm'
+                  : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200 hover:bg-slate-900'
+              } disabled:opacity-50 flex items-center gap-1.5`}
             >
-              {tag.label}
+              <span>{tag.label}</span>
             </button>
           );
         })}

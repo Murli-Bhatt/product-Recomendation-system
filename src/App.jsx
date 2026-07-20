@@ -6,8 +6,9 @@ import { SearchBar } from './components/SearchBar';
 import { ProductGrid } from './components/ProductGrid';
 import { RecommendationForm } from './components/RecommendationForm';
 import { RecommendationResults } from './components/RecommendationResults';
+import { CartDrawer } from './components/CartDrawer';
 import { useProductRecommender } from './hooks/useProductRecommender';
-import { Sparkles, ShoppingBag, SlidersHorizontal, RefreshCw, Bot, AlertCircle } from 'lucide-react';
+import { Sparkles, ShoppingBag, RefreshCw, Bot, AlertCircle } from 'lucide-react';
 
 export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +20,11 @@ export default function App() {
   });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showAiRecommender, setShowAiRecommender] = useState(false);
+
+  // Theme & Cart State
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
   // States required by prompt for AI Search & Recommendation
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +43,46 @@ export default function App() {
     fetchRecommendations: fetchFormRecommendations,
     resetRecommendations: resetFormRecommendations,
   } = useProductRecommender();
+
+  // Cart Management Handlers
+  const handleAddToCart = (product) => {
+    setCartItems((prevItems) => {
+      const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);
+      if (existingIndex > -1) {
+        const updated = [...prevItems];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + 1,
+        };
+        return updated;
+      }
+      return [...prevItems, { product, quantity: 1 }];
+    });
+  };
+
+  const handleUpdateQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      handleRemoveItem(productId);
+      return;
+    }
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const handleRemoveItem = (productId) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.product.id !== productId));
+  };
+
+  const handleClearCart = () => {
+    setCartItems([]);
+  };
+
+  const totalCartCount = useMemo(() => {
+    return cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }, [cartItems]);
 
   // Execute Groq API search when user submits query in SearchBar
   const handleSearchSubmit = async (queryToSubmit) => {
@@ -105,22 +151,40 @@ export default function App() {
   const categories = ['All', 'Phones', 'Laptops', 'Headphones', 'Smartwatches'];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* Header Bar */}
-      <Header />
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+        isDarkMode
+          ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white'
+          : 'bg-slate-50 text-slate-900 selection:bg-indigo-600 selection:text-white'
+      }`}
+    >
+      {/* Navbar Header with Theme & Cart Controls */}
+      <Header
+        cartCount={totalCartCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        isDarkMode={isDarkMode}
+        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+      />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12 lg:space-y-16">
-        {/* Hero Section & SearchBar */}
+      {/* Cart Drawer */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
+        onClearCart={handleClearCart}
+        isDarkMode={isDarkMode}
+      />
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-16 sm:space-y-20">
+        {/* Hero Section & Integrated 56px SearchBar */}
         <section className="text-center max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" /> Next-Gen Tech Store & AI Assistant
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          <h1 className={`text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             Explore Cutting-Edge Tech Gear
           </h1>
 
-          {/* SearchBar Component */}
+          {/* 56px SearchBar with embedded Custom Criteria Form toggle icon */}
           <SearchBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -131,33 +195,29 @@ export default function App() {
               if (filter.category) setSelectedCategory(filter.category);
             }}
             isLoading={isLoading}
+            onToggleAiForm={() => setShowAiRecommender(!showAiRecommender)}
+            isAiFormOpen={showAiRecommender}
           />
-
-          <div className="pt-2">
-            <button
-              onClick={() => setShowAiRecommender(!showAiRecommender)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition-all"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              {showAiRecommender ? 'Hide Custom Criteria Form' : 'Open Custom Criteria Form'}
-            </button>
-          </div>
         </section>
 
-        {/* Form-based Custom Criteria Section */}
+        {/* Custom Preference Criteria Section */}
         {showAiRecommender && (
-          <section className="bg-slate-900/50 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <section className={`border rounded-2xl sm:rounded-3xl p-5 sm:p-8 space-y-6 backdrop-blur-xl shadow-2xl ${
+            isDarkMode
+              ? 'bg-slate-900/60 border-indigo-500/30 shadow-indigo-950/20'
+              : 'bg-white border-indigo-200 shadow-indigo-100/50'
+          }`}>
+            <div className={`flex items-center justify-between border-b pb-4 ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
-                <h2 className="text-lg font-bold text-white">Groq AI Detailed Preference Form</h2>
+                <Sparkles className="w-5 h-5 text-indigo-500" />
+                <h2 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Groq AI Detailed Preference Form</h2>
               </div>
-              <span className="text-xs text-indigo-400 bg-indigo-950/60 border border-indigo-800/60 px-2.5 py-1 rounded-full font-mono">
+              <span className="text-xs text-indigo-500 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full font-mono">
                 llama-3.3-70b-versatile
               </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
               <div className="lg:col-span-4">
                 <RecommendationForm
                   preferences={preferences}
@@ -180,8 +240,8 @@ export default function App() {
           </section>
         )}
 
-        {/* AI Reasoning Badge & Active Filters Header */}
-        <section className="pt-4 lg:pt-8 space-y-6">
+        {/* AI Reasoning Insights & Catalog Grid Section */}
+        <section className="space-y-8">
           {/* Error Banner */}
           {error && (
             <div className="bg-rose-950/40 border border-rose-800/60 rounded-2xl p-4 flex items-center justify-between text-rose-300 text-xs sm:text-sm">
@@ -200,21 +260,25 @@ export default function App() {
 
           {/* AI Reasoning Badge */}
           {isFiltered && reasoning && (
-            <div className="bg-indigo-950/50 border border-indigo-500/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl shadow-indigo-950/30">
+            <div className={`border rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl ${
+              isDarkMode
+                ? 'bg-indigo-950/50 border-indigo-500/40 shadow-indigo-950/30'
+                : 'bg-indigo-50 border-indigo-200 shadow-indigo-100'
+            }`}>
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shrink-0">
+                <div className="p-2 rounded-xl bg-indigo-600/20 text-indigo-500 border border-indigo-500/30 shrink-0">
                   <Bot className="w-5 h-5 animate-bounce" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-500">
                       AI Reasoning Insights
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 font-mono">
                       {displayedProducts.length} Items Found
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-200 mt-0.5 font-medium">
+                  <p className={`text-xs sm:text-sm mt-0.5 font-medium ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
                     {reasoning}
                   </p>
                 </div>
@@ -223,32 +287,40 @@ export default function App() {
               {/* Reset Filters Button */}
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center gap-2 transition-colors border border-slate-700/60 shrink-0"
+                className={`w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors border shrink-0 ${
+                  isDarkMode
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700/60'
+                    : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-300 shadow-sm'
+                }`}
               >
-                <RefreshCw className="w-3.5 h-3.5 text-indigo-400" />
+                <RefreshCw className="w-3.5 h-3.5 text-indigo-500" />
                 Reset Filters
               </button>
             </div>
           )}
 
           {/* Catalog Controls Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 ${isDarkMode ? 'border-slate-800/80' : 'border-slate-200'}`}>
             <div className="flex items-center gap-3">
-              <ShoppingBag className="w-6 h-6 text-indigo-400 shrink-0" />
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              <ShoppingBag className="w-6 h-6 text-indigo-500 shrink-0" />
+              <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                 {isFiltered ? 'AI Filtered Products' : 'All Products'}
               </h2>
-              <span className="text-xs text-slate-400 bg-slate-900/90 px-2.5 py-0.5 rounded-full border border-slate-800/80 font-mono font-normal">
+              <span className={`text-xs px-2.5 py-0.5 rounded-full border font-mono font-normal shrink-0 ${
+                isDarkMode
+                  ? 'bg-slate-900/90 text-slate-400 border-slate-800'
+                  : 'bg-slate-100 text-slate-600 border-slate-200'
+              }`}>
                 {displayedProducts.length} of {productsData.length} items
               </span>
             </div>
 
             {/* Category Pills & Reset Button */}
-            <div className="flex items-center gap-2 overflow-x-auto">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
               {isFiltered && (
                 <button
                   onClick={handleResetFilters}
-                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 flex items-center gap-1.5 transition-colors shrink-0"
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 flex items-center gap-1.5 transition-colors shrink-0"
                 >
                   <RefreshCw className="w-3 h-3" /> Clear AI Filter
                 </button>
@@ -264,10 +336,12 @@ export default function App() {
                       setReasoning('');
                     }
                   }}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                     selectedCategory === category && !isFiltered
                       ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
-                      : 'bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      : isDarkMode
+                      ? 'bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
                   }`}
                 >
                   {category}
@@ -281,11 +355,12 @@ export default function App() {
             products={displayedProducts}
             isLoading={isLoading}
             onResetSearch={handleResetFilters}
+            onAddToCart={handleAddToCart}
           />
         </section>
       </main>
 
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+      <footer className={`border-t py-6 text-center text-xs ${isDarkMode ? 'border-slate-900 bg-slate-950 text-slate-500' : 'border-slate-200 bg-white text-slate-500'}`}>
         <p>Built with Vite, React, Tailwind CSS, & Groq SDK</p>
       </footer>
     </div>

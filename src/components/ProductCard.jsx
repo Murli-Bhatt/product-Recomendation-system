@@ -1,13 +1,13 @@
 import React from 'react';
-import { Star, Tag } from 'lucide-react';
+import { Star, Tag, ShoppingCart } from 'lucide-react';
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, onAddToCart }) {
   if (!product) return null;
 
   return (
-    <div className="h-full group rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+    <div className="h-full group rounded-2xl bg-slate-900/90 border border-slate-800/80 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden flex flex-col justify-between">
       <div className="flex-1 flex flex-col">
-        {/* Product Image */}
+        {/* Product Image without dark gradient overlays */}
         <div className="relative aspect-video w-full overflow-hidden bg-slate-950 shrink-0">
           <img
             src={product.image}
@@ -15,15 +15,11 @@ export function ProductCard({ product }) {
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
-          <span className="absolute bottom-3 right-3 text-sm font-bold text-white bg-slate-950/80 px-2.5 py-1 rounded-lg backdrop-blur-md border border-slate-800">
-            ${product.price}
-          </span>
         </div>
 
         {/* Card Body */}
-        <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-          <div className="space-y-2">
+        <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
                 <Tag className="w-3 h-3" /> {product.category}
@@ -45,9 +41,21 @@ export function ProductCard({ product }) {
         </div>
       </div>
 
-      <div className="px-5 pb-5 pt-1">
-        <button className="w-full py-2.5 px-3 rounded-xl bg-slate-800/80 hover:bg-indigo-600 text-slate-200 hover:text-white font-medium text-xs transition-colors duration-200 flex items-center justify-center gap-1.5 border border-slate-700/50 hover:border-indigo-500/50 shadow-sm">
-          View Details
+      {/* Clean Card Footer with Price and Add to Cart Button */}
+      <div className="p-5 pt-0 flex items-center justify-between gap-3 border-t border-slate-800/40 mt-2">
+        <div className="flex flex-col">
+          <span className="text-[10px] text-slate-400 font-medium">Price</span>
+          <span className="text-lg font-extrabold text-white font-mono leading-none">
+            ${product.price}
+          </span>
+        </div>
+
+        <button
+          onClick={() => onAddToCart && onAddToCart(product)}
+          className="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all duration-200 flex items-center gap-2 shadow-md shadow-indigo-600/25 active:scale-95"
+        >
+          <ShoppingCart className="w-3.5 h-3.5" />
+          <span>Add to Cart</span>
         </button>
       </div>
     </div>
